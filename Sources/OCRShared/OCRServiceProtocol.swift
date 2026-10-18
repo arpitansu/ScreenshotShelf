@@ -9,4 +9,4 @@ public protocol OCRServiceProtocol {
 }
 
 /// The helper's bundle identifier, which is also its XPC service name.
-public let ocrServiceName = "local.arpit.screenshotshelf.OCRService"
+public let ocrServiceName = "app.screenshotshelf.OCRService"

@@ -7,7 +7,7 @@
     <key>CFBundleDisplayName</key>
     <string>Screenshot Shelf Text Reader</string>
     <key>CFBundleIdentifier</key>
-    <string>local.arpit.screenshotshelf.OCRService</string>
+    <string>app.screenshotshelf.OCRService</string>
     <key>CFBundleExecutable</key>
     <string>OCRService</string>
     <key>CFBundlePackageType</key>

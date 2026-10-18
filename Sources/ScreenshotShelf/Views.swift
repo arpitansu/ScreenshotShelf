@@ -297,10 +297,14 @@ struct ShelfView: View {
         }
     }
 
+    /// Copies the entry. The ⌃⌘V picker then closes so you can paste straight away;
+    /// a shelf opened from the menu bar stays open and shows "Copied".
     private func copyAndClose(_ clip: ClipItem) {
         clips.copy(clip)
-        query = ""
-        onHide()
+        if ui.isPopup {
+            query = ""
+            onHide()
+        }
     }
 
     private func focusSearchSoon() {

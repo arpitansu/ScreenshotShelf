@@ -12,6 +12,9 @@ enum ShelfTab: String, CaseIterable, Identifiable {
 final class ShelfUIState: ObservableObject {
     @Published var tab: ShelfTab = .shots
     @Published var focusRequest = 0
+    /// Opened with ⌃⌘V as a quick picker: closes after you pick something, or when
+    /// you click elsewhere. Opened any other way, it stays put until you close it.
+    @Published var isPopup = false
 }
 
 /// A borderless floating panel that can still take clicks and typing
@@ -69,9 +72,10 @@ final class ShelfPanelController: NSObject {
     }
 
     /// Shows the shelf. Screenshots tab pops up quietly; Clipboard tab takes typing focus.
-    func show(tab: ShelfTab = .shots) {
+    func show(tab: ShelfTab = .shots, popup: Bool = false) {
         generation += 1
         ui.tab = tab
+        ui.isPopup = popup
         if hosting == nil {
             let view = ShelfView(
                 store: store,
@@ -102,10 +106,10 @@ final class ShelfPanelController: NSObject {
 
     /// For the keyboard shortcut: open the clipboard, or close it if it's already open.
     func toggleClipboard() {
-        if panel.isVisible && ui.tab == .clips {
+        if panel.isVisible && ui.tab == .clips && ui.isPopup {
             hide()
         } else {
-            show(tab: .clips)
+            show(tab: .clips, popup: true)
         }
     }
 
@@ -126,8 +130,10 @@ final class ShelfPanelController: NSObject {
     }
 
     @objc private func panelResignedKey() {
-        // The clipboard picker behaves like a popup: click elsewhere and it goes away.
-        if ui.tab == .clips { hide() }
+        // Only the ⌃⌘V picker closes when you click elsewhere. A shelf opened from the
+        // menu bar (or by a new screenshot) stays open; other windows coming and going,
+        // like the menu bar window closing, must not close it.
+        if ui.isPopup { hide() }
     }
 
     private func contentDidResize(_ size: CGSize) {

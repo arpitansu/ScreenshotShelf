@@ -8,7 +8,7 @@ swift build -c release
 
 BIN=".build/release"
 APP="build/Screenshot Shelf.app"
-XPC="$APP/Contents/XPCServices/local.arpit.screenshotshelf.OCRService.xpc"
+XPC="$APP/Contents/XPCServices/app.screenshotshelf.OCRService.xpc"
 
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" "$XPC/Contents/MacOS"

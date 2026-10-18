@@ -7,7 +7,7 @@
     <key>CFBundleDisplayName</key>
     <string>Screenshot Shelf</string>
     <key>CFBundleIdentifier</key>
-    <string>local.arpit.screenshotshelf</string>
+    <string>app.screenshotshelf</string>
     <key>CFBundleExecutable</key>
     <string>ScreenshotShelf</string>
     <key>CFBundlePackageType</key>
