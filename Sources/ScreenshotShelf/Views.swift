@@ -3,6 +3,16 @@ import AppKit
 
 // MARK: - Helpers
 
+extension View {
+    /// Marks a text field as a plain search box: no AutoFill suggestions,
+    /// no autocorrect. (macOS may still start its AutoFill helper; it's a system process.)
+    func plainSearchField() -> some View {
+        self
+            .textContentType(Optional<NSTextContentType>.none)
+            .autocorrectionDisabled()
+    }
+}
+
 enum Format {
     static let relativeFormatter: RelativeDateTimeFormatter = {
         let f = RelativeDateTimeFormatter()
@@ -243,10 +253,15 @@ struct ShelfView: View {
     private var clipsList: some View {
         TextField("Search clipboard", text: $query)
             .textFieldStyle(.roundedBorder)
+            .plainSearchField()
             .focused($searchFocused)
             .onSubmit {
                 if let first = clips.search(query).first { copyAndClose(first) }
             }
+
+        if clips.isPaused {
+            PausedBanner(clips: clips)
+        }
 
         let results = Array(clips.search(query).prefix(8))
         if clips.clips.isEmpty {
@@ -267,9 +282,19 @@ struct ShelfView: View {
             }
         }
 
-        Text("⌃⌘V opens this anywhere · Return copies the top one")
-            .font(.system(size: 10))
-            .foregroundStyle(.secondary)
+        HStack {
+            Text("⌃⌘V opens this · Return copies the top one")
+                .font(.system(size: 10))
+                .foregroundStyle(.secondary)
+            Spacer()
+            if !clips.isPaused {
+                Button("Pause") { clips.isPaused = true }
+                    .buttonStyle(.plain)
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                    .help("Stop saving what you copy until you resume")
+            }
+        }
     }
 
     private func copyAndClose(_ clip: ClipItem) {
@@ -378,6 +403,26 @@ struct ClipRow: View {
     }
 }
 
+/// Shown while clipboard history is paused, with a one-click resume.
+struct PausedBanner: View {
+    @ObservedObject var clips: ClipStore
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "pause.circle.fill")
+                .foregroundStyle(.orange)
+            Text("History paused. Copies aren't saved.")
+                .font(.system(size: 12, weight: .semibold))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Button("Resume") { clips.isPaused = false }
+                .controlSize(.small)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color.orange.opacity(0.15)))
+    }
+}
+
 // MARK: - Menu bar library
 
 struct LibraryView: View {
@@ -400,6 +445,16 @@ struct LibraryView: View {
             TextField(tab == .shots ? "Search text inside screenshots" : "Search clipboard",
                       text: $query)
                 .textFieldStyle(.roundedBorder)
+                .plainSearchField()
+
+            if tab == .shots && store.textToRead > 0 && !query.isEmpty {
+                HStack(spacing: 6) {
+                    ProgressView().controlSize(.small)
+                    Text("Reading text in \(store.textToRead) screenshot\(store.textToRead == 1 ? "" : "s")…")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
 
             if let toast = store.toast {
                 Text(toast)
@@ -443,6 +498,9 @@ struct LibraryView: View {
                 if tab == .shots {
                     Button("Open folder") { store.revealFolder() }
                 } else {
+                    Toggle("Pause history", isOn: $clips.isPaused)
+                        .toggleStyle(.checkbox)
+                        .help("While paused, nothing you copy is saved")
                     Button("Clear unpinned") { clips.clearUnpinned() }
                         .disabled(clips.clips.allSatisfy(\.pinned))
                 }
@@ -454,6 +512,12 @@ struct LibraryView: View {
         .frame(width: 440)
         .onChange(of: store.retentionDays) { days in clips.cleanupExpired(retentionDays: days) }
         .onChange(of: tab) { _ in query = "" }
+        .onChange(of: query) { newValue in
+            // Read text only when you actually search, and only for screenshots not read yet.
+            if tab == .shots && !newValue.trimmingCharacters(in: .whitespaces).isEmpty {
+                store.readMissingText()
+            }
+        }
     }
 
     @ViewBuilder
@@ -483,6 +547,10 @@ struct LibraryView: View {
 
     @ViewBuilder
     private var clipsContent: some View {
+        if clips.isPaused {
+            PausedBanner(clips: clips)
+                .padding(.bottom, 8)
+        }
         if clips.clips.isEmpty {
             emptyState(icon: "doc.on.clipboard",
                        title: "Nothing copied yet",

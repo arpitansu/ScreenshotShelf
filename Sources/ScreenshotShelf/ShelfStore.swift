@@ -15,6 +15,8 @@ struct ShelfItem: Identifiable, Codable, Equatable {
 final class ShelfStore: ObservableObject {
     @Published private(set) var items: [ShelfItem] = []
     @Published var toast: String?
+    /// How many screenshots are still waiting to have their text read (shown during search).
+    @Published private(set) var textToRead = 0
     @Published var retentionDays: Int {
         didSet {
             UserDefaults.standard.set(retentionDays, forKey: "retentionDays")
@@ -26,6 +28,7 @@ final class ShelfStore: ObservableObject {
     let folder: URL
     private let metadataURL: URL
     private var toastTask: Task<Void, Never>?
+    private var isReadingText = false
 
     init() {
         let fm = FileManager.default
@@ -104,20 +107,27 @@ final class ShelfStore: ObservableObject {
                              createdAt: Date(), pinned: false, text: nil)
         items.insert(item, at: 0)
         save()
-        scanText(for: item)
+        // Text is read later, only when you search or press Copy text.
         return item
     }
 
-    func backfillText() {
-        for item in items where item.text == nil { scanText(for: item) }
-    }
-
-    private func scanText(for item: ShelfItem) {
-        let fileURL = url(for: item)
-        let id = item.id
+    /// Reads the text of every screenshot that hasn't been read yet, one at a time.
+    /// Called when you start searching. Each screenshot is only ever read once.
+    func readMissingText() {
+        guard !isReadingText else { return }
+        let pending = items.filter { $0.text == nil }
+        guard !pending.isEmpty else { return }
+        isReadingText = true
+        textToRead = pending.count
         Task {
-            let lines = await TextRecognizer.recognize(url: fileURL)
-            self.setText(lines.joined(separator: "\n"), for: id)
+            for item in pending {
+                if let lines = await OCRClient.shared.recognize(url: self.url(for: item)) {
+                    self.setText(lines.joined(separator: "\n"), for: item.id)
+                }
+                self.textToRead = max(0, self.textToRead - 1)
+            }
+            self.textToRead = 0
+            self.isReadingText = false
         }
     }
 
@@ -155,8 +165,12 @@ final class ShelfStore: ObservableObject {
         }
         let fileURL = url(for: item)
         let id = item.id
+        showToast("Reading text…")
         Task {
-            let lines = await TextRecognizer.recognize(url: fileURL)
+            guard let lines = await OCRClient.shared.recognize(url: fileURL) else {
+                self.showToast("Couldn't read text. Try again")
+                return
+            }
             let text = lines.joined(separator: "\n")
             self.setText(text, for: id)
             self.writeText(text)

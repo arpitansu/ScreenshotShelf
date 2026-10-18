@@ -51,7 +51,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         store.cleanupExpired()
         clips.cleanupExpired(retentionDays: store.retentionDays)
-        store.backfillText()
 
         let timer = Timer(timeInterval: 3600, target: self,
                           selector: #selector(hourlyCleanup),
@@ -59,6 +58,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         timer.tolerance = 300
         RunLoop.main.add(timer, forMode: .common)
         cleanupTimer = timer
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        clips.saveNow()   // don't lose the last second of clipboard history
     }
 
     @objc private func hourlyCleanup() {

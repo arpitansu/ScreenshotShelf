@@ -25,12 +25,21 @@ struct ClipItem: Identifiable, Codable, Equatable {
 final class ClipStore: NSObject, ObservableObject {
     @Published private(set) var clips: [ClipItem] = []
 
+    /// While paused, nothing you copy is recorded. Remembered across restarts.
+    @Published var isPaused: Bool {
+        didSet { UserDefaults.standard.set(isPaused, forKey: "clipboardPaused") }
+    }
+
     /// Used for the shared "Copied" toast.
     weak var toastHost: ShelfStore?
 
     static let maxClips = 200
     static let maxTextLength = 20_000
-    static let maxImageBytes = 25 * 1024 * 1024
+    /// Images bigger than this aren't kept (a full-screen Retina capture is ~5–10 MB).
+    static let maxImageBytes = 10 * 1024 * 1024
+    /// At most this many copied images are kept, so history can't fill your disk
+    /// (worst case about 30 × 10 MB = 300 MB, usually far less).
+    static let maxImageClips = 30
 
     /// Pasteboard types that password managers and similar apps use to say "don't record this".
     private static let privateTypes: Set<String> = [
@@ -45,6 +54,7 @@ final class ClipStore: NSObject, ObservableObject {
     private let metadataURL: URL
     private var lastChangeCount: Int
     private var timer: Timer?
+    private var saveTask: Task<Void, Never>?
 
     override init() {
         let fm = FileManager.default
@@ -54,6 +64,7 @@ final class ClipStore: NSObject, ObservableObject {
         metadataURL = support.appendingPathComponent("clips.json")
         try? fm.createDirectory(at: folder, withIntermediateDirectories: true)
         lastChangeCount = NSPasteboard.general.changeCount
+        isPaused = UserDefaults.standard.bool(forKey: "clipboardPaused")
         super.init()
         load()
     }
@@ -73,6 +84,8 @@ final class ClipStore: NSObject, ObservableObject {
         let count = pb.changeCount
         guard count != lastChangeCount else { return }
         lastChangeCount = count
+        // Paused: skip it entirely, and it won't be picked up after resuming either.
+        if isPaused { return }
         if count == PasteboardTracker.ownChangeCount { return }
 
         let types = pb.types ?? []
@@ -129,7 +142,10 @@ final class ClipStore: NSObject, ObservableObject {
     }
 
     func fileURL(for clip: ClipItem) -> URL? {
-        clip.fileName.map { folder.appendingPathComponent($0) }
+        // Only ever plain file names inside the app's own Clips folder.
+        guard let name = clip.fileName,
+              !name.isEmpty, !name.contains("/"), !name.hasPrefix(".") else { return nil }
+        return folder.appendingPathComponent(name)
     }
 
     func thumbnail(for clip: ClipItem) -> NSImage? {
@@ -193,8 +209,15 @@ final class ClipStore: NSObject, ObservableObject {
     }
 
     private func trimOverflow() {
+        // Too many entries overall: drop the oldest unpinned ones.
         while clips.count > Self.maxClips,
               let last = clips.lastIndex(where: { !$0.pinned }) {
+            removeFile(of: clips[last])
+            clips.remove(at: last)
+        }
+        // Too many images: drop the oldest unpinned images.
+        while clips.filter({ $0.kind == .image }).count > Self.maxImageClips,
+              let last = clips.lastIndex(where: { $0.kind == .image && !$0.pinned }) {
             removeFile(of: clips[last])
             clips.remove(at: last)
         }
@@ -220,7 +243,19 @@ final class ClipStore: NSObject, ObservableObject {
         }
     }
 
+    /// Batches disk writes: many quick copies cause one write, not one each.
     private func save() {
+        saveTask?.cancel()
+        saveTask = Task {
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            if !Task.isCancelled { self.saveNow() }
+        }
+    }
+
+    /// Writes history to disk immediately (also called when the app quits).
+    func saveNow() {
+        saveTask?.cancel()
+        saveTask = nil
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         if let data = try? encoder.encode(clips) {
