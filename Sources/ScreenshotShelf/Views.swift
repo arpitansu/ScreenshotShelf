@@ -368,11 +368,20 @@ struct ClipRow: View {
                 ThumbnailView(image: clips.thumbnail(for: clip), height: 40)
                     .frame(width: 60)
                     .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
-                Text("Image · \(Format.relative(clip.createdAt))")
+                Text(clip.fromOtherDevice == true
+                     ? "Image from iPhone · \(Format.relative(clip.createdAt))"
+                     : "Image · \(Format.relative(clip.createdAt))")
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
                 Spacer(minLength: 0)
             } else {
+                if clip.fromOtherDevice == true {
+                    Image(systemName: "iphone")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .help("Copied on your iPhone or iPad")
+                        .accessibilityLabel("From your iPhone or iPad")
+                }
                 Text(clip.preview)
                     .font(.system(size: 12))
                     .lineLimit(2)
@@ -547,6 +556,11 @@ struct LibraryView: View {
 
     @ViewBuilder
     private var clipsContent: some View {
+        Toggle("Also save images copied on iPhone or iPad", isOn: $clips.saveRemoteImages)
+            .toggleStyle(.checkbox)
+            .font(.system(size: 11))
+            .help("Each image you copy on your iPhone or iPad is transferred to this Mac right away, even if you never paste it")
+            .padding(.bottom, 6)
         if clips.isPaused {
             PausedBanner(clips: clips)
                 .padding(.bottom, 8)

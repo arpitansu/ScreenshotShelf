@@ -42,6 +42,13 @@ and appears on the shelf at the top-right of your screen.
   again, then **⌘V** to paste.
 - Hover an entry to **pin** or **remove** it.
 - Copies from password managers are skipped automatically.
+- **Copies from your iPhone or iPad** (Universal Clipboard) are saved too: text with a
+  small phone icon, images labelled "Image from iPhone". Images are fetched from the
+  phone in the background, so the app never freezes; a large photo may briefly show
+  macOS's own "Pasting from iPhone" progress. Turn off **Also save images copied on
+  iPhone or iPad** (menu bar → Clipboard) if you'd rather not have every phone image
+  transferred. Needs Handoff on and both devices on the same Apple Account, as for
+  normal Universal Clipboard.
 - **Pause** (bottom right) stops recording until you press **Resume**, even across
   restarts. Use it while copying anything sensitive.
 
