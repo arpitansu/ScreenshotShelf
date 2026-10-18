@@ -32,6 +32,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
+        // When the app last started. Screenshots newer than that which are still
+        // in the screenshot folder were taken while the app was closed.
+        let defaults = UserDefaults.standard
+        let previousLaunch = defaults.object(forKey: "lastLaunchDate") as? Date
+        defaults.set(Date(), forKey: "lastLaunchDate")
+
         let watcher = ScreenshotWatcher()
         watcher.onNewScreenshot = { [weak self] url in
             guard let self else { return }
@@ -39,7 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.shelf.show(tab: .shots)
             }
         }
-        watcher.start()
+        watcher.start(catchUpSince: previousLaunch)
         self.watcher = watcher
 
         clips.startWatching()

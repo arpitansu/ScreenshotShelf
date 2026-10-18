@@ -84,7 +84,8 @@ Click the menu bar icon to see everything:
 - **Nothing leaves your Mac.** No network access at all; text recognition is on-device.
 - **No system changes.** No admin rights, no settings changed, nothing installed to run at login.
 - **Screenshots are only ever moved to the Trash**, never deleted outright.
-  Screenshots already on your Desktop when the app starts are left alone.
+  Screenshots taken while the app was closed are picked up the next time it starts;
+  older ones already on your Desktop (and everything on the very first launch) are left alone.
 - **Clipboard history is stored as a plain file** in
   `~/Library/Application Support/ScreenshotShelf/`. It keeps at most 200 entries
   and 30 images (10 MB max each), and follows the auto-delete setting.

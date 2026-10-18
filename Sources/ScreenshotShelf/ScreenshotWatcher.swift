@@ -31,9 +31,20 @@ final class ScreenshotWatcher {
         return FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)[0]
     }
 
-    func start() {
-        // Remember what's already there so old screenshots are left alone.
-        for url in imageFiles() { seen.insert(url.lastPathComponent) }
+    /// - Parameter catchUpSince: screenshots taken after this moment that are still in
+    ///   the folder were missed while the app was closed, so they're picked up now.
+    ///   Anything older is left alone. Pass nil (first launch) to leave everything alone.
+    func start(catchUpSince: Date? = nil) {
+        var missed: [URL] = []
+        for url in imageFiles() {
+            seen.insert(url.lastPathComponent)
+            if let since = catchUpSince,
+               ScreenshotWatcher.isScreenCapture(url),
+               let created = try? url.resourceValues(forKeys: [.creationDateKey]).creationDate,
+               created >= since {
+                missed.append(url)
+            }
+        }
 
         let fd = open(directory.path, O_EVTONLY)
         guard fd >= 0 else {
@@ -52,6 +63,14 @@ final class ScreenshotWatcher {
         }
         source.resume()
         self.source = source
+
+        // Hand over the screenshots taken while the app was closed, oldest first.
+        let sorted = missed.sorted {
+            let a = (try? $0.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
+            let b = (try? $1.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
+            return a < b
+        }
+        for url in sorted { onNewScreenshot?(url) }
     }
 
     func stop() {
