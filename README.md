@@ -18,13 +18,19 @@ searchable clipboard history.
 
 ## Build and run
 
-    cd ~/Desktop/screnshotshelf
+    git clone https://github.com/arpitansu/ScreenshotShelf.git
+    cd ScreenshotShelf
     ./build.sh
     open "build/Screenshot Shelf.app"
 
-Needs Xcode or the Command Line Tools (`xcode-select --install`).
+Needs macOS 13 or later and Xcode or the Command Line Tools (`xcode-select --install`).
+If `./build.sh` says "permission denied", run `chmod +x build.sh` once, or use `bash build.sh`.
+
 The first time, macOS asks to let the app access your Desktop. Click **Allow**:
 that's how it picks up new screenshots.
+
+> **Early version.** It's been used on one Mac so far. If something doesn't work on
+> yours, please open an issue with your macOS version and what happened.
 
 ## The shelf
 
@@ -106,3 +112,7 @@ Click the menu bar icon to see everything:
 ## Start at login (optional)
 
 Copy the app to /Applications, then System Settings → General → Login Items → +.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
