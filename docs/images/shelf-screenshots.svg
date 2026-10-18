@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="510" viewBox="0 0 360 510" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif" role="img" aria-label="The floating shelf showing two screenshots, with Copy, Copy text, Pin and Trash buttons on the first">
+  <!-- desktop backdrop -->
+  <rect x="0" y="0" width="360" height="510" rx="14" fill="#2e3b35"/>
+
+  <!-- shelf panel -->
+  <rect x="38" y="20" width="284" height="470" rx="16" fill="#1c1c1e" stroke="#ffffff" stroke-opacity="0.14"/>
+
+  <!-- tab switcher -->
+  <rect x="50" y="32" width="222" height="32" rx="9" fill="#ffffff" fill-opacity="0.07"/>
+  <rect x="52" y="34" width="108" height="28" rx="7" fill="#ffffff" fill-opacity="0.18"/>
+  <text x="106" y="52.5" text-anchor="middle" font-size="12" font-weight="600" fill="#ffffff">Screenshots</text>
+  <text x="216" y="52.5" text-anchor="middle" font-size="12" font-weight="600" fill="#ffffff" fill-opacity="0.65">Clipboard</text>
+
+  <!-- close button -->
+  <circle cx="295" cy="48" r="15" fill="#ffffff" fill-opacity="0.14"/>
+  <path d="M290 43 L300 53 M300 43 L290 53" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- card 1 (hovered) -->
+  <rect x="50" y="76" width="260" height="172" rx="12" fill="#ffffff" fill-opacity="0.10"/>
+  <clipPath id="thumb1"><rect x="58" y="84" width="244" height="124" rx="8"/></clipPath>
+  <g clip-path="url(#thumb1)">
+    <rect x="58" y="84" width="244" height="124" fill="#1e1f22"/>
+    <rect x="58" y="84" width="244" height="16" fill="#ececef"/>
+    <circle cx="68" cy="92" r="3" fill="#ec6a5e"/><circle cx="78" cy="92" r="3" fill="#f4bf4f"/><circle cx="88" cy="92" r="3" fill="#61c554"/>
+    <rect x="68" y="108" width="90" height="5" rx="2" fill="#8e8e95"/>
+    <rect x="68" y="118" width="140" height="5" rx="2" fill="#c9c9cf"/>
+    <rect x="68" y="128" width="70" height="5" rx="2" fill="#ff8a80"/>
+    <rect x="68" y="138" width="170" height="5" rx="2" fill="#c9c9cf"/>
+    <rect x="68" y="148" width="110" height="5" rx="2" fill="#8e8e95"/>
+    <!-- hover action bar -->
+    <rect x="58" y="170" width="244" height="38" fill="#000000" fill-opacity="0.75"/>
+    <rect x="64" y="176" width="81" height="26" rx="6" fill="#0a84ff"/>
+    <text x="104.5" y="193" text-anchor="middle" font-size="11" font-weight="600" fill="#ffffff">Copy</text>
+    <rect x="151" y="176" width="81" height="26" rx="6" fill="#ffffff" fill-opacity="0.18"/>
+    <text x="191.5" y="193" text-anchor="middle" font-size="11" font-weight="600" fill="#ffffff">Copy text</text>
+    <rect x="238" y="176" width="26" height="26" rx="6" fill="#ffffff" fill-opacity="0.18"/>
+    <path d="M248.5 182 h5 l-0.8 5 l3 3 h-9.4 l3 -3 z M251 190 v6" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/>
+    <rect x="270" y="176" width="26" height="26" rx="6" fill="#ffffff" fill-opacity="0.18"/>
+    <path d="M277.5 184 h11 M281 184 v-1.5 h4 v1.5 M279 184 l0.8 9.5 h6.4 l0.8 -9.5" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <text x="60" y="232" font-size="11" fill="#ffffff" fill-opacity="0.55">Just now</text>
+  <text x="300" y="232" text-anchor="end" font-size="11" fill="#ffffff" fill-opacity="0.55">Deletes in 7 days</text>
+
+  <!-- card 2 -->
+  <rect x="50" y="256" width="260" height="172" rx="12" fill="#ffffff" fill-opacity="0.06"/>
+  <clipPath id="thumb2"><rect x="58" y="264" width="244" height="124" rx="8"/></clipPath>
+  <g clip-path="url(#thumb2)">
+    <rect x="58" y="264" width="244" height="124" fill="#ffffff"/>
+    <rect x="58" y="264" width="244" height="18" fill="#f0f0f3"/>
+    <rect x="96" y="269" width="150" height="8" rx="4" fill="#ffffff"/>
+    <rect x="72" y="294" width="60" height="5" rx="2" fill="#8e8e93"/>
+    <rect x="72" y="306" width="96" height="12" rx="3" fill="#1d1d1f"/>
+    <rect x="72" y="326" width="150" height="5" rx="2" fill="#c7c7cc"/>
+    <rect x="72" y="336" width="120" height="5" rx="2" fill="#c7c7cc"/>
+    <rect x="72" y="354" width="72" height="20" rx="6" fill="#2f7a46"/>
+    <rect x="200" y="294" width="88" height="80" rx="8" fill="#e4ecf7"/>
+  </g>
+  <text x="60" y="412" font-size="11" fill="#ffffff" fill-opacity="0.55">2 min ago</text>
+  <text x="300" y="412" text-anchor="end" font-size="11" fill="#ff9f0a">Deletes tomorrow</text>
+
+  <text x="60" y="458" font-size="11" fill="#ffffff" fill-opacity="0.55">+3 more in the menu bar</text>
+</svg>

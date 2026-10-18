@@ -1,7 +1,16 @@
 # Screenshot Shelf
 
-A small menu bar app for macOS 13+. New screenshots go to a floating shelf
-instead of piling up on your Desktop.
+A small menu bar app for macOS 13+. New screenshots land on a floating shelf
+instead of piling up on your Desktop, and everything you copy is kept in a
+searchable clipboard history.
+
+<p align="center">
+  <img src="docs/images/shelf-screenshots.svg" width="300" alt="The floating shelf with two screenshots and Copy, Copy text, Pin and Trash buttons">
+  &nbsp;&nbsp;
+  <img src="docs/images/shelf-clipboard.svg" width="300" alt="The clipboard picker with a search box and recent copies">
+</p>
+
+<sub>Illustrations drawn from the app's layout; the real thing looks the same but with your own screenshots.</sub>
 
 ## Build and run
 
@@ -13,31 +22,52 @@ Needs Xcode or the Command Line Tools (`xcode-select --install`).
 The first time, macOS asks to let the app access your Desktop. Click **Allow**:
 that's how it picks up new screenshots.
 
-## What it does
+## The shelf
 
-- Take a screenshot (⇧⌘3 / ⇧⌘4 / ⇧⌘5). It moves to `~/Pictures/Screenshot Shelf`
-  and appears on the shelf at the top-right of your screen.
-- Hover a card: **Copy** (image), **Copy text**, **Pin**, **Move to Trash**.
-  Drag a card straight into any app. Double-click to open.
-- Menu bar icon: search the text inside your screenshots, see pinned ones,
-  change auto-delete (1–30 days, default 7).
-- **Clipboard history:** everything you copy (text and images) is saved. Press
-  **⌃⌘V** anywhere to open it, type to search, click or press Return to copy an
-  entry again, then ⌘V to paste. Pin entries you reuse. Copies from password
-  managers are skipped.
-- **Pause clipboard history** when copying something sensitive: the **Pause** link
-  at the bottom of the shelf's Clipboard tab, or the **Pause history** checkbox in
-  the menu bar's Clipboard tab. While paused, nothing you copy is saved (not even
-  after you resume). It stays paused until you press **Resume**, even across restarts.
-- Unpinned screenshots older than the limit go to the Trash (recoverable);
-  old clipboard entries are removed (max 200 kept).
-- Screenshots already on your Desktop when the app starts are left alone.
+Take a screenshot (⇧⌘3 / ⇧⌘4 / ⇧⌘5). It moves to `~/Pictures/Screenshot Shelf`
+and appears on the shelf at the top-right of your screen.
 
-## How it stays light
+- **Hover a card** for **Copy** (the image), **Copy text**, **Pin** and **Move to Trash**.
+- **Drag a card** straight into any app: chat, email, a document.
+- **Double-click** to open it in Preview.
+- Each card shows when it will be auto-deleted. **Pinned** screenshots are kept forever.
+- Close the shelf with **✕** or **Esc**.
+
+## Clipboard history
+
+(Second picture at the top.) Everything you copy, text and images, is saved.
+
+- Press **⌃⌘V** anywhere to open it.
+- Type to search. Click an entry, or press **Return** for the top one, to copy it
+  again, then **⌘V** to paste.
+- Hover an entry to **pin** or **remove** it.
+- Copies from password managers are skipped automatically.
+- **Pause** (bottom right) stops recording until you press **Resume**, even across
+  restarts. Use it while copying anything sensitive.
+
+## Menu bar library
+
+<p align="center">
+  <img src="docs/images/menu-library.svg" width="440" alt="Menu bar library with pinned and recent screenshots and the auto-delete setting">
+</p>
+
+Click the menu bar icon to see everything:
+
+- **Search the text inside your screenshots**, e.g. "invoice" or an error message.
+- **Pinned** screenshots at the top, then **Recent** ones with their auto-delete date
+  (orange = deleting soon).
+- **Auto-delete** unpinned items after 1, 3, 7 (default), 14 or 30 days.
+- The **Clipboard** tab shows your full history, with **Pause history** and **Clear unpinned**.
+
+## How it works
+
+<p align="center">
+  <img src="docs/images/how-it-works.svg" width="720" alt="Diagram: screenshot saved, app woken by macOS, moved to the shelf; text read on demand by a helper that quits when idle">
+</p>
 
 - **No polling for screenshots.** macOS wakes the app only when the screenshot
   folder changes.
-- **Text is read only when you need it** — when you press Copy text or search.
+- **Text is read only when you need it**, when you press Copy text or search.
   Each screenshot is read once and the result is saved.
 - **Text reading runs in a separate helper** (an XPC service inside the app,
   shown as "Screenshot Shelf Text Reader"). It starts on demand and quits about
@@ -48,6 +78,18 @@ that's how it picks up new screenshots.
   each check reads a single number.
 - "AutoFill (Screenshot Shelf)" in Activity Monitor is a macOS system helper that
   appears for any app's text box. It isn't part of this app.
+
+## Privacy and safety
+
+- **Nothing leaves your Mac.** No network access at all; text recognition is on-device.
+- **No system changes.** No admin rights, no settings changed, nothing installed to run at login.
+- **Screenshots are only ever moved to the Trash**, never deleted outright.
+  Screenshots already on your Desktop when the app starts are left alone.
+- **Clipboard history is stored as a plain file** in
+  `~/Library/Application Support/ScreenshotShelf/`. It keeps at most 200 entries
+  and 30 images (10 MB max each), and follows the auto-delete setting.
+- **Lowering the auto-delete setting applies right away**: older unpinned
+  screenshots go to the Trash immediately.
 
 ## Start at login (optional)
 

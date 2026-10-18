@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="300" viewBox="0 0 780 300" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif" role="img" aria-label="How it works: you take a screenshot, macOS saves it, the app is woken and moves it to the shelf; text is read only when you search or copy text, by a helper that quits when idle">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#6e6e73"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="780" height="300" rx="14" fill="#f6f6f8"/>
+
+  <!-- row 1: screenshot flow -->
+  <text x="24" y="34" font-size="11" font-weight="700" fill="#6e6e73" letter-spacing="0.5">WHEN YOU TAKE A SCREENSHOT</text>
+
+  <rect x="24" y="48" width="160" height="72" rx="10" fill="#ffffff" stroke="#000000" stroke-opacity="0.12"/>
+  <text x="104" y="78" text-anchor="middle" font-size="14" font-weight="700" fill="#1d1d1f">⇧⌘4</text>
+  <text x="104" y="98" text-anchor="middle" font-size="12" fill="#55555a">You take a screenshot</text>
+
+  <rect x="214" y="48" width="160" height="72" rx="10" fill="#ffffff" stroke="#000000" stroke-opacity="0.12"/>
+  <text x="294" y="78" text-anchor="middle" font-size="13" font-weight="600" fill="#1d1d1f">macOS saves it</text>
+  <text x="294" y="98" text-anchor="middle" font-size="12" fill="#55555a">to your Desktop</text>
+
+  <rect x="404" y="48" width="160" height="72" rx="10" fill="#e4ecf7" stroke="#0a5bd3" stroke-opacity="0.5"/>
+  <text x="484" y="74" text-anchor="middle" font-size="13" font-weight="600" fill="#1d1d1f">App wakes up</text>
+  <text x="484" y="93" text-anchor="middle" font-size="11" fill="#2b4a73">macOS tells it the</text>
+  <text x="484" y="109" text-anchor="middle" font-size="11" fill="#2b4a73">folder changed (no polling)</text>
+
+  <rect x="594" y="48" width="162" height="72" rx="10" fill="#ffffff" stroke="#000000" stroke-opacity="0.12"/>
+  <text x="675" y="74" text-anchor="middle" font-size="13" font-weight="600" fill="#1d1d1f">Moved to the shelf</text>
+  <text x="675" y="93" text-anchor="middle" font-size="11" fill="#55555a">Pictures/Screenshot Shelf</text>
+  <text x="675" y="109" text-anchor="middle" font-size="11" fill="#55555a">then back to sleep</text>
+
+  <path d="M186 84 H210" stroke="#6e6e73" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M376 84 H400" stroke="#6e6e73" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M566 84 H590" stroke="#6e6e73" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- row 2: text reading -->
+  <text x="24" y="170" font-size="11" font-weight="700" fill="#6e6e73" letter-spacing="0.5">ONLY WHEN YOU SEARCH OR PRESS COPY TEXT</text>
+
+  <rect x="24" y="184" width="160" height="72" rx="10" fill="#ffffff" stroke="#000000" stroke-opacity="0.12"/>
+  <text x="104" y="214" text-anchor="middle" font-size="13" font-weight="600" fill="#1d1d1f">Search / Copy text</text>
+  <text x="104" y="234" text-anchor="middle" font-size="12" fill="#55555a">you ask for the text</text>
+
+  <rect x="214" y="184" width="350" height="72" rx="10" fill="#fdf0e6" stroke="#c2410c" stroke-opacity="0.5" stroke-dasharray="5 4"/>
+  <text x="389" y="210" text-anchor="middle" font-size="13" font-weight="600" fill="#1d1d1f">Text Reader helper (separate process)</text>
+  <text x="389" y="230" text-anchor="middle" font-size="12" fill="#6b3a12">starts → reads the screenshots → replies</text>
+  <text x="389" y="246" text-anchor="middle" font-size="12" fill="#6b3a12">quits after 5 s idle, freeing its memory</text>
+
+  <rect x="594" y="184" width="162" height="72" rx="10" fill="#ffffff" stroke="#000000" stroke-opacity="0.12"/>
+  <text x="675" y="214" text-anchor="middle" font-size="13" font-weight="600" fill="#1d1d1f">Text saved</text>
+  <text x="675" y="234" text-anchor="middle" font-size="12" fill="#55555a">never read twice</text>
+
+  <path d="M186 220 H210" stroke="#6e6e73" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <path d="M566 220 H590" stroke="#6e6e73" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <text x="24" y="284" font-size="11" fill="#6e6e73">Everything happens on your Mac. Nothing is sent over the internet.</text>
+</svg>
